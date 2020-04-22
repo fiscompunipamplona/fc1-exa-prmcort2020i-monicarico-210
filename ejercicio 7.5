@@ -1,0 +1,57 @@
+#Ejercicio 7.5
+#Si no ha realizado el Ejercicio ~ 7.4, debe hacerlo antes de esto
+#La función $ f (t) $ representa una onda cuadrada con amplitud ~ 1 y frecuencia $ 1 \, $ Hz:
+
+#   f (t)= 1 si 2t es par o -1 si 2t es impar
+
+# donde  x \ redondeado al siguiente entero más bajo.
+#Intentemos suavizar esta función usando una transformada de Fourier, como lo hicimos
+#en el ejercicio anterior Escribir un programa que cree una matriz de
+#N = 1000 elementos que contienen mil muestras igualmente espaciadas de un
+#ciclo único de esta onda cuadrada. Calcule la transformada discreta de Fourier
+#de la matriz. Ahora establezca todos menos los primeros diez coeficientes de Fourier en cero,
+#luego invierta la transformada de Fourier nuevamente para recuperar la señal suavizada.
+#Haga un diagrama del resultado y en los mismos ejes muestre el original
+#onda cuadrada también. Debes encontrar que la señal no es simplemente
+#suavizado hay artefactos, meneos, en los resultados. Explique
+#brevemente de dónde vienen estos.
+
+#Los artefactos similares a estos surgen cuando los coeficientes de Fourier se descartan en
+#esqemas de compresión de audio y visual como los descritos en la Sección ~ 7.3.1
+#y son la fuente principal de imperfecciones en el sonido comprimido digitalmente
+#e imágenes.
+
+
+from scipy import floor, linspace, array, zeros, copy
+from scipy.fftpack import rfft, irfft
+from pylab import plot, show, xlabel, ylabel
+
+
+# onda cuadrada con amplitud 1 y frecuencia 1 Hz
+def onda_cuadrada(t):
+    if floor(2 * t) % 2 == 0:
+        return 1
+    else:
+        return -1
+
+# número de puntos de muestra en un ciclo
+N = 1000
+puntosmuestra = linspace(0, 1, N)
+
+#creamos una lista con el numero de puntos de nuestra onda cuadrada para luego realizarle su respectiva transformada de fourier
+onda_cuadrada_puntos = array(list(map(onda_cuadrada, puntosmuestra)), float)
+onda_cuadrada_fourier = rfft(onda_cuadrada_puntos)
+plot(puntosmuestra, onda_cuadrada_puntos, 'r')
+show()
+
+#ahora de nuestra transformada sacamos los 10 pimeros coeficientes y le realizamos la transformada inversa 
+primeros_coeficientes = zeros(len(onda_cuadrada_fourier), float)
+primeros_coeficientes[0 : 9] = copy(onda_cuadrada_fourier[0 : 9])
+onda_cuadradacomprimida= irfft(primeros_coeficientes)
+
+#realizamos la respectiva grafica de los puntos de muestra y la  transformada inversa ya suavisada
+plot(puntosmuestra, onda_cuadrada_puntos, 'r')
+plot(puntosmuestra, onda_cuadradacomprimida, 'g')
+xlabel('t')
+ylabel('f(t)')
+show()
