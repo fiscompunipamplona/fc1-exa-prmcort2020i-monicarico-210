@@ -1,0 +1,60 @@
+# EJERCICIO 7.4 FOURIER FILTRADO Y ALISADO
+
+
+# en los recursos en línea encontrará un archivo llamado dow.txt 
+#que contiene el valor de cierre diario para cada día hábil desde 
+#finales de 2006 hasta finales de 2010 del promedio industrial dow
+#jones, que es una medida de los precios promedio en el mercado de valores de EE. UU.
+#escriba un programa para hacer lo siguiente:
+
+#a) lea los datos de dow.txt y grábelos en un gráfico
+
+#b) calcule los coeficientes de la transformada discreta de 
+#Fourier de los datos utilizando la función rfft de numpy.fft, que produce una matriz de números complejos 1 / 2N + 1
+
+#c) ahora establezca todos menos el 10% de los elementos de 
+#esta matriz en cero (es decir, establezca el último 90% en cero pero mantenga los valores del primer 10%)
+
+#d) calcule la transformada inversa de Fourier de la matriz
+# resultante de ceros y todo utilizando la función irfft y grafíquela en el mismo gráfico que los datos originales. Es posible que deba variar los colores de las dos curvas para asegurarse de que ambas aparezcan en el comentario del gráfico sobre lo que ve lo que sucede cuando establece los coeficientes de Fourier en cero.
+
+#e) modifique su programa para que establezca todos menos 
+#el primer 2% de los coeficientes a cero y vuelva a ejecutarlo
+
+from scipy import loadtxt, zeros, copy, floor
+from scipy.fftpack import rfft, irfft
+from pylab import plot, show, xlabel, ylabel
+# en esta primera parte lo que vamos hacer es importar nuestro archivo txt y meterlo dentro de una variable  
+dow = loadtxt("dow.txt", float)
+# graficamos los datos de nuestro archivo txt
+plot(dow)
+show()
+
+# a los datos de nuestro archivo txt le vamos a aplicar nuestra transformada de fourier rapida 
+fourier = rfft(dow)
+# graficamos nuestra transformada de fourier
+plot(fourier)
+show()
+ # en este punto sacamos el 10% de los datos de la transformada de fourier y la metemos dentro de una nueva variable
+N = len(fourier)
+primeros10 = zeros(N, float)
+primeros10[0 : int(N / 10)] = copy(fourier[0 : int(N / 10)])
+
+#tomamos todos lo datos de la trasnformada menos el 10% este con el fin de mira
+#si nuestra transformada inversa coincide con la grafica de nuestros datos originales
+inversa_primeros10 = irfft(primeros10)
+plot(dow)
+plot(inversa_primeros10, 'g' )
+show()
+
+#en este caso lo que asemos es qque de nuestra tranformada de fourier rapida le sacamos el 2% de los datos y 
+#hacemos nuestra transformada de fourier inversa  y nos damos cuenta que esta grafica tiene menos ruido que la del 10%
+# es una grafica con mas suavidad
+primeros2 = zeros(N, float)
+primeros2[0 : int(N / 50)] = copy(fourier[0 : int(N / 50)])
+inversa_primeros2 =irfft(primeros2)
+plot(dow)
+plot(inversa_primeros2, 'b' )
+show()
+
+
